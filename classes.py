@@ -1,4 +1,5 @@
 from threading import Thread
+from bitarray import BitArray
 import ipdb
 import sys
 
@@ -82,15 +83,37 @@ class StreamEndPacket(Packet):
 
 class RawLogicDataPacket(Packet):
 
-	def __init__(self, signal, values):
+	def __init__(self, signal, bits):
 		super().__init__(signal)
-		self.values = values
+		self.bits = bits
 
 class AnalogDataPacket(Packet):
 
-	def __init__(self, signal, values):
+	def __init__(self, signal, bits, encoding):
 		super().__init__(signal)
-		self.values = values
+		self.bits = bits
+		self.encoding = encoding
+		self._values = None
+
+	@property
+	def values(self):
+		if self._values is None:
+			self._values = self.encoding.decode(self.bits)
+		return self._values
+
+class AnalogEncoding():
+
+	def __init__(self, bits, scale=1.0, offset=0.0, signed=True, floating=False, bigendian=False, decimal=False):
+		self.bits = bits
+		self.scale = scale
+		self.offset = offset
+		self.signed = signed
+		self.floating = floating
+		self.bigendian = bigendian
+		self.decimal = decimal
+
+	def decode(self, bits):
+		import ipdb; ipdb.set_trace()
 
 class Data():
 
@@ -100,7 +123,7 @@ class Data():
 				"Buffer provided is not a multiple of unit size")
 		self.buf = buf
 		self.count = buf.nbytes / unitsize
-		self.bits = Bits(self)
+		self.bits = BitArray(self.buf, 0, (self.count, 8), (unitsize * 8, 1))
 
 class Bits():
 
@@ -175,13 +198,15 @@ class RawLogicMapping(Mapping):
 
 class AnalogMapping(Mapping):
 
-	def __init__(self, signal, bitstream):
+	def __init__(self, signal, bitstream, encoding):
 		super().__init__(signal)
 		self.bitstream = bitstream
+		self.encoding = encoding
 
 	def emit(self, data):
 		signal = self.signal
-		signal.emit(AnalogDataPacket(signal, data.bits[self.bitstream.slice]))
+		signal.emit(AnalogDataPacket(signal, data.bits[self.bitstream.slice],
+			self.encoding))
 
 class ThreadedBlock(Block):
 

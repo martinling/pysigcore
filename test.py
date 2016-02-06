@@ -31,9 +31,11 @@ class TestSource(ThreadedBlock):
             stream.add_mapping(
                 RawLogicMapping(output, stream.bits[i]))
         stream.add_mapping(
-            AnalogMapping(self.outputs["A0"], stream.bits[8:16]))
+            AnalogMapping(self.outputs["A0"], stream.bits[8:16],
+                AnalogEncoding(8, 1/128)))
         stream.add_mapping(
-            AnalogMapping(self.outputs["A1"], stream.bits[16:32]))
+            AnalogMapping(self.outputs["A1"], stream.bits[16:32],
+                AnalogEncoding(16, 1/32768)))
 
         # Number of samples to be sent at a time.
         block_samples = 100000
@@ -52,8 +54,8 @@ class TestSource(ThreadedBlock):
             samplenumbers = np.arange(stream.count, stream.count + block_samples,
                 dtype=np.uint)
             samples['Logic'] = samplenumbers & 0xFF
-            samples['A0'] = np.sin(samplenumbers/1000.0)
-            samples['A1'] = np.cos(samplenumbers/500.0)
+            samples['A0'] = np.sin(samplenumbers/1000.0) * 128.0
+            samples['A1'] = np.cos(samplenumbers/500.0) * 32768.0
 
             # Emit packed sample data to stream.
             print("Source sending samples %d - %d" % (stream.count,
@@ -104,9 +106,9 @@ flowgraph = Flowgraph(context)
 source = TestSource(flowgraph)
 threshold = Threshold(flowgraph)
 sink = PrintSink(flowgraph)
-#threshold.inputs["In"].connect(source.outputs["A1"])
-#sink.inputs["In"].connect(threshold.outputs["Out"])
-sink.inputs["In"].connect(source.outputs["A1"])
+threshold.inputs["In"].connect(source.outputs["A1"])
+sink.inputs["In"].connect(threshold.outputs["Out"])
+#sink.inputs["In"].connect(source.outputs["A1"])
 
 # Run for 1s.
 source.start()
