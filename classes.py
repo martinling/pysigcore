@@ -122,8 +122,9 @@ class Data():
 			raise InvalidArgument(
 				"Buffer provided is not a multiple of unit size")
 		self.buf = buf
-		self.count = buf.nbytes / unitsize
-		self.bits = BitArray(self.buf, 0, (self.count, 8), (unitsize * 8, 1))
+		self.count = buf.nbytes // unitsize
+		self.bits = BitArray(self.buf, 0, (self.count, unitsize * 8),
+			(unitsize * 8, 1))
 
 class Bits():
 
@@ -194,7 +195,7 @@ class RawLogicMapping(Mapping):
 
 	def emit(self, data):
 		signal = self.signal
-		signal.emit(RawLogicDataPacket(signal, data.bits[self.bitstream.slice]))
+		signal.emit(RawLogicDataPacket(signal, data.bits[:,self.bitstream.slice]))
 
 class AnalogMapping(Mapping):
 
@@ -205,7 +206,7 @@ class AnalogMapping(Mapping):
 
 	def emit(self, data):
 		signal = self.signal
-		signal.emit(AnalogDataPacket(signal, data.bits[self.bitstream.slice],
+		signal.emit(AnalogDataPacket(signal, data.bits[:,self.bitstream.slice],
 			self.encoding))
 
 class ThreadedBlock(Block):

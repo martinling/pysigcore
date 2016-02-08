@@ -10,3 +10,4 @@ b = BitArray(buf, offset, shape, strides)
 
 print(b[8])
 print(b[8:16])
+print(b[:])
