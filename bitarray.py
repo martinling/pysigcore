@@ -73,3 +73,19 @@ class BitArray():
     def as_boolarray(self):
         bools = np.unpackbits(self.buf)[self.offset:]
         return as_strided(bools, shape=self.shape, strides=self.strides)
+
+    def _as_type(self, dtype):
+        dtype = '%s%d' % (dtype, self.shape[-1])
+        shape = self.shape[:-1]
+        bools = self.as_boolarray()
+        return np.packbits(bools).view(dtype=dtype).reshape(shape)
+
+    def as_unsigned(self):
+        return self._as_type('uint')
+
+    def as_signed(self):
+        return self._as_type('int')
+
+    def as_float(self):
+        return self._as_type('float')
+
