@@ -113,7 +113,13 @@ class AnalogEncoding():
 		self.decimal = decimal
 
 	def decode(self, bits):
-		import ipdb; ipdb.set_trace()
+		if self.floating:
+			values = bits.as_float()
+		elif self.signed:
+			values = bits.as_signed()
+		else:
+			values = bits.as_unsigned()
+		return self.scale * (values - self.offset)
 
 class Data():
 
