@@ -59,7 +59,7 @@ class BitArray():
 
         if len(shape) == 0:
             # Retrieve individual bit value.
-            return bool(self.buf[byte_offset] & (1 << bit_offset))
+            return bool(self.buf[byte_offset] & (0x80 >> bit_offset))
 
         bit_size = sum((d - 1) * s for d, s in zip(shape, strides)) + 1
         byte_size = int(np.ceil(bit_size / 8))
