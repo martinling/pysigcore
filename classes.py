@@ -103,14 +103,13 @@ class AnalogDataPacket(Packet):
 
 class AnalogEncoding():
 
-	def __init__(self, bits, scale=1.0, offset=0.0, signed=True, floating=False, bigendian=False, decimal=False):
+	def __init__(self, bits, scale=1.0, offset=0.0, signed=True, floating=False, bigendian=False):
 		self.bits = bits
 		self.scale = scale
 		self.offset = offset
 		self.signed = signed
 		self.floating = floating
 		self.bigendian = bigendian
-		self.decimal = decimal
 
 	def decode(self, bits):
 		if self.floating:
