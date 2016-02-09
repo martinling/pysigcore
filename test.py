@@ -85,11 +85,19 @@ class Threshold(Block):
         if not self.output.connected:
             return
 
-        if isinstance(packet, AnalogDataPacket):
+        if isinstance(packet, StreamStartPacket):
+            self.stream = DataStream(self, unitsize=1)
+            self.stream.add_mapping(
+                RawLogicMapping(self.output, self.stream.bits[7]))
+            self.stream.start()
+
+        elif isinstance(packet, AnalogDataPacket):
             logic_samples = packet.values > 0
-            logic_packet = RawLogic(logic_samples)
             print("Threshold sending data")
-            self.output.emit(logic_packet)
+            self.stream.emit(logic_samples)
+
+        elif isinstance(packet, StreamEndPacket):
+            self.stream.end()
 
 class PrintSink(Block):
 
