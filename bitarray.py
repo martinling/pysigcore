@@ -1,4 +1,5 @@
 from numbers import Integral
+from numpy.lib.stride_tricks import as_strided
 import numpy as np
 
 class BitArray():
@@ -68,3 +69,7 @@ class BitArray():
         buf = self.buf[byte_offset:byte_limit]
 
         return BitArray(buf, bit_offset, shape, strides)
+
+    def as_boolarray(self):
+        bools = np.unpackbits(self.buf)[self.offset:]
+        return as_strided(bools, shape=self.shape, strides=self.strides)
