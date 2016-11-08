@@ -6,7 +6,7 @@ class BitArray():
 
     def __init__(self, buf, offset, shape, strides):
         self.buf = memoryview(buf)
-        self.offset = offset
+        self.offset = int(offset)
         self.shape = tuple(shape)
         self.strides = tuple(strides)
         self.ndim = len(shape)
