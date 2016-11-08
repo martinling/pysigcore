@@ -5,7 +5,7 @@ import numpy as np
 class BitArray():
 
     def __init__(self, buf, offset, shape, strides):
-        self.buf = np.frombuffer(buf, dtype=np.uint8)
+        self.buf = memoryview(buf)
         self.offset = offset
         self.shape = tuple(shape)
         self.strides = tuple(strides)
@@ -54,7 +54,7 @@ class BitArray():
             else:
                 raise IndexError("Invalid index: %s" % repr(index))
 
-        byte_offset = offset / 8
+        byte_offset = offset // 8
         bit_offset = offset % 8
 
         if len(shape) == 0:
