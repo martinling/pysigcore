@@ -16,6 +16,9 @@ class BitArray():
             self.__class__.__name__,
                 repr(self.buf), self.offset, self.shape, self.strides)
 
+    def __len__(self):
+        return np.product(self.shape)
+
     def __getitem__(self, indices):
 
         if not isinstance(indices, tuple):
