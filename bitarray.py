@@ -42,7 +42,7 @@ class BitArray():
                     start = 0
                 elif start < 0:
                     start %= length
-                if stop is None:
+                if stop is None or stop == 9223372036854775807:
                     stop = length
                 elif stop < 0:
                     stop %= length
