@@ -74,7 +74,8 @@ class BitArray():
         return BitArray(buf, bit_offset, shape, strides)
 
     def as_boolarray(self):
-        bools = np.unpackbits(self.buf)[self.offset:]
+        bytes = np.frombuffer(self.buf, dtype=np.uint8)
+        bools = np.unpackbits(bytes)[self.offset:]
         return as_strided(bools, shape=self.shape, strides=self.strides)
 
     def _as_type(self, dtype):
