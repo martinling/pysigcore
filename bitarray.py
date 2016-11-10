@@ -20,7 +20,7 @@ class BitArray():
     def __len__(self):
         return np.product(self.shape)
 
-    def __getitem__(self, indices):
+    def _slice(self, indices):
 
         if not isinstance(indices, tuple):
             indices = (indices,)
@@ -61,10 +61,6 @@ class BitArray():
         byte_offset = offset // 8
         bit_offset = offset % 8
 
-        if len(shape) == 0:
-            # Retrieve individual bit value.
-            return bool(self.buf[byte_offset] & (0x80 >> bit_offset))
-
         bit_size = sum((d - 1) * s for d, s in zip(shape, strides)) + 1
         byte_size = (bit_size // 8) + (1 if (bit_size % 8) != 0 else 0)
 
@@ -73,6 +69,15 @@ class BitArray():
         buf = self.buf[byte_offset:byte_limit]
 
         return BitArray(buf, bit_offset, shape, strides)
+
+    def __getitem__(self, indices):
+
+        result = self._slice(indices)
+
+        if len(result.shape) == 0:
+            return bool(result.buf[0] & (0x80 >> result.offset))
+        else:
+            return result
 
     def reshape(self, shape):
         try:
