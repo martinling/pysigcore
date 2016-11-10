@@ -74,6 +74,20 @@ class BitArray():
 
         return BitArray(buf, bit_offset, shape, strides)
 
+    def reshape(self, shape):
+        try:
+            shape = tuple(shape)
+        except TypeError:
+            shape = (shape,)
+        if np.product(shape) != len(self):
+            raise InvalidArgument(
+                "Reshape failed: New shape %s has different length to "
+                "existing shape %s" % (str(shape), str(self.shape)))
+        bools = self.as_boolarray().reshape(-1)
+        buf = np.packbits(bools)
+        strides = [1] + list(np.cumproduct(shape[-1:0:-1]))
+        return BitArray(buf, 0, shape, strides)
+
     def as_boolarray(self):
         bytes = np.frombuffer(self.buf, dtype=np.uint8)
         bools = np.unpackbits(bytes)[self.offset:]
