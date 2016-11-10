@@ -66,7 +66,7 @@ class BitArray():
             return bool(self.buf[byte_offset] & (0x80 >> bit_offset))
 
         bit_size = sum((d - 1) * s for d, s in zip(shape, strides)) + 1
-        byte_size = int(np.ceil(bit_size / 8))
+        byte_size = (bit_size // 8) + (1 if (bit_size % 8) != 0 else 0)
 
         byte_limit = byte_offset + byte_size
 
