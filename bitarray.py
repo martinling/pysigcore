@@ -6,7 +6,7 @@ import sys
 class BitArray():
 
     def __init__(self, buf, offset, shape, strides):
-        self.buf = memoryview(buf)
+        self.buf = memoryview(np.frombuffer(buf, dtype=np.uint8))
         self.offset = int(offset)
         self.shape = tuple(shape)
         self.strides = tuple(strides)
