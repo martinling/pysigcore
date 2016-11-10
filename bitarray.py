@@ -1,6 +1,7 @@
 from numbers import Integral
 from numpy.lib.stride_tricks import as_strided
 import numpy as np
+import sys
 
 class BitArray():
 
@@ -45,7 +46,7 @@ class BitArray():
                     start = 0
                 elif start < 0:
                     start %= length
-                if stop is None or stop == 9223372036854775807:
+                if stop is None or stop == sys.maxsize:
                     stop = length
                 elif stop < 0:
                     stop %= length
