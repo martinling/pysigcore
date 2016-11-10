@@ -75,7 +75,7 @@ class BitArray():
         result = self._slice(indices)
 
         if len(result.shape) == 0:
-            return bool(result.buf[0] & (0x80 >> result.offset))
+            return bool(result.buf[0] & (1 << result.offset))
         else:
             return result
 
