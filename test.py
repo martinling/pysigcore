@@ -53,9 +53,13 @@ class TestSource(ThreadedBlock):
             # Populate sample data.
             samplenumbers = np.arange(stream.count, stream.count + block_samples,
                 dtype=np.uint)
-            samples['Logic'] = samplenumbers & 0xFF
-            samples['A0'] = np.sin(samplenumbers/1000.0) * 128.0
-            samples['A1'] = np.cos(samplenumbers/500.0) * 32768.0
+
+            if any(l.connected for l in self.logic_outputs):
+                samples['Logic'] = samplenumbers & 0xFF
+            if self.analog_outputs[0].connected:
+                samples['A0'] = np.sin(samplenumbers/1000.0) * 128.0
+            if self.analog_outputs[1].connected:
+                samples['A1'] = np.cos(samplenumbers/500.0) * 32768.0
 
             # Emit packed sample data to stream.
             print("Source sending samples %d - %d" % (stream.count,
